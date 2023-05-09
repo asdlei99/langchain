@@ -84,7 +84,10 @@ class LLMMathChain(Chain):
                 )
             )
         except Exception as e:
-            raise ValueError(f"{e}. Please try again with a valid numerical expression")
+            raise ValueError(
+                f'LLMMathChain._evaluate("{expression}") raised error: {e}.'
+                " Please try again with a valid numerical expression"
+            )
 
         # Remove any leading and trailing brackets from the output
         return re.sub(r"^\[|\]$", "", output)
@@ -172,3 +175,10 @@ class LLMMathChain(Chain):
     ) -> LLMMathChain:
         llm_chain = LLMChain(llm=llm, prompt=prompt)
         return cls(llm_chain=llm_chain, **kwargs)
+
+
+if __name__ == "__main__":
+    from langchain.llms import OpenAI
+
+    chain = LLMMathChain.from_llm(OpenAI())
+    print(chain._evaluate_expression("age of 2+2"))
